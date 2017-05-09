@@ -1,53 +1,74 @@
 # SYNOPSIS
 #  install_jdk8
 install_jdk8() {
-    local JDK8_NAME="jdk1.8.0_121.x86_64"
-    local JDK8_RPM="jdk-8u121-linux-x64.rpm"
+    local jdk8Name="jdk1.8.0_121.x86_64"
+    local jdk8Rpm="jdk-8u121-linux-x64.rpm"
 
-    if yum list installed $JDK8_NAME > /dev/null 2>&1; then
-        echo "=========== Rouplex ============= Skipping install of $JDK8_NAME (already installed)"
+    if yum list installed $jdk8Name > /dev/null 2>&1; then
+        echo "=========== Rouplex ============= Skipping install of $jdk8Name (already installed)"
     else
-        echo "=========== Rouplex ============= Downloading java rpm $JDK8_RPM"
-        wget --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u121-b13/e9e7ea248e2c4826b92b3f075a80e441/$JDK8_RPM -O $JDK8_RPM
+        echo "=========== Rouplex ============= Downloading java rpm $jdk8Rpm"
+        wget --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u121-b13/e9e7ea248e2c4826b92b3f075a80e441/$jdk8Rpm -O $jdk8Rpm  > /dev/null 2>&1
 
-        echo "=========== Rouplex ============= Installing java rpm $JDK8_NAME from $JDK8_RPM"
-        sudo yum -y localinstall $JDK8_RPM > /dev/null 2>&1
+        echo "=========== Rouplex ============= Installing java rpm $jdk8Name from $jdk8Rpm"
+        sudo yum -y localinstall $jdk8Rpm > /dev/null 2>&1
 
-        if ! yum list installed $JDK8_NAME > /dev/null 2>&1; then
-            echo "=========== Rouplex ============= Exiting. Error installing rpm $JDK8_NAME"
+        if ! yum list installed $jdk8Name > /dev/null 2>&1; then
+            echo "=========== Rouplex ============= Exiting. Error installing rpm $jdk8Name"
             exit 1
         fi
 
-        echo "=========== Rouplex ============= Installed $JDK8_NAME"
+        echo "=========== Rouplex ============= Installed $jdk8Name"
     fi
 }
 
 # SYNOPSIS
-#  install_tomcat <tomcat_version>
-#  Takes in the tomcat version (ex: 8.5.12) and populates TOMCAT_FOLDER off current folder upon success
+#  install_tomcat <tomcat_version> <extras>
+# Takes in the tomcat version (ex: 8.5.12) and a list of extras and populates TOMCAT_FOLDER (under current folder)
+# and TOMCAT_PATH upon success.
+# Example: install_tomcat 8.5.12 "catalina-jmx-remote.jar another-extra.jar"
 install_tomcat() {
     if [ -z $1 ]; then
         echo "=========== Rouplex ============= Exiting. Missing <tomcat_version> in install_tomcat()"
         exit 1
     fi
 
-    local TOMCAT_VERSION=$1
-    TOMCAT_FOLDER="apache-tomcat-"${TOMCAT_VERSION}
-    local TOMCAT_GZ=${TOMCAT_FOLDER}.tar.gz
+    local tomcatVersion=$1
+    TOMCAT_FOLDER="apache-tomcat-"${tomcatVersion}
+    TOMCAT_PATH=`pwd`/${TOMCAT_FOLDER}
+    local tomcatGz=${TOMCAT_FOLDER}.tar.gz
 
-    echo "=========== Rouplex ============= Downloading tomcat $TOMCAT_VERSION"
-    wget http://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_VERSION:0:1}/v${TOMCAT_VERSION}/bin/${TOMCAT_GZ} -O $TOMCAT_GZ > /dev/null 2>&1
-    wget http://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_VERSION:0:1}/v${TOMCAT_VERSION}/bin/extras/catalina-jmx-remote.jar -O $TOMCAT_FOLDER/lib/catalina-jmx-remote.jar > /dev/null 2>&1
-
-    echo "=========== Rouplex ============= Untaring tomcat $TOMCAT_GZ"
-    tar -xvf $TOMCAT_GZ > /dev/null 2>&1
+    echo "=========== Rouplex ============= Downloading tomcat $tomcatVersion"
+    wget http://archive.apache.org/dist/tomcat/tomcat-${tomcatVersion:0:1}/v${tomcatVersion}/bin/${tomcatGz} -O $tomcatGz > /dev/null 2>&1
 
     if [ $? -eq 0 ]; then
-        echo "=========== Rouplex ============= Installed tomcat $TOMCAT_GZ at $TOMCAT_FOLDER"
+    echo "=========== Rouplex ============= Downloaded tomcat $tomcatVersion"
     else
-        echo "=========== Rouplex ============= Exiting. Error installing rpm $TOMCAT_GZ"
+        echo "=========== Rouplex ============= Exiting. Error installing rpm $tomcatGz"
         exit 1
     fi
+
+    echo "=========== Rouplex ============= Untaring tomcat $tomcatGz"
+    tar -xvf $tomcatGz > /dev/null 2>&1
+
+    if [ $? -eq 0 ]; then
+        echo "=========== Rouplex ============= Installed tomcat $tomcatGz at $TOMCAT_PATH"
+    else
+        echo "=========== Rouplex ============= Exiting. Error installing rpm $tomcatGz"
+        exit 1
+    fi
+
+    for extra in $2; do
+        echo "=========== Rouplex ============= Downloading tomcat extra $extra"
+        wget http://archive.apache.org/dist/tomcat/tomcat-${tomcatVersion:0:1}/v${tomcatVersion}/bin/extras/$extra -O $TOMCAT_FOLDER/lib/$extra > /dev/null 2>&1
+
+        if [ $? -eq 0 ]; then
+            echo "=========== Rouplex ============= Downloaded tomcat extra $extra"
+        else
+            echo "=========== Rouplex ============= Exiting. Error downloading tomcat extra $extra"
+            exit 1
+        fi
+    done
 }
 
 # SYNOPSIS
@@ -110,7 +131,3 @@ search_and_replace() {
 
     sed -i "" -e "s/$searchEscaped/$replaceEscaped/g" $1
 }
-
-#replace "server.xml" "#keystoreFile#" "/home/ec2-user/apache-tomcat-8.5.12/conf/server_key.p12"
-#replace "server.xml" "#keystorePass#" "kotplot123"
-#
