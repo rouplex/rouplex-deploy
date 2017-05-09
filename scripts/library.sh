@@ -33,7 +33,7 @@ install_tomcat() {
 
     local TOMCAT_VERSION=$1
     TOMCAT_FOLDER="apache-tomcat-"${TOMCAT_VERSION}
-    local TOMCAT_GZ=${TOMCAT}.tar.gz
+    local TOMCAT_GZ=${TOMCAT_FOLDER}.tar.gz
 
     echo "=========== Rouplex ============= Downloading tomcat $TOMCAT_VERSION"
     wget http://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_VERSION:0:1}/v${TOMCAT_VERSION}/bin/${TOMCAT_GZ} -O $TOMCAT_GZ
