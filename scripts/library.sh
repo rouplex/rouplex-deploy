@@ -36,7 +36,8 @@ install_tomcat() {
     local TOMCAT_GZ=${TOMCAT_FOLDER}.tar.gz
 
     echo "=========== Rouplex ============= Downloading tomcat $TOMCAT_VERSION"
-    wget http://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_VERSION:0:1}/v${TOMCAT_VERSION}/bin/${TOMCAT_GZ} -O $TOMCAT_GZ
+    wget http://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_VERSION:0:1}/v${TOMCAT_VERSION}/bin/${TOMCAT_GZ} -O $TOMCAT_GZ > /dev/null 2>&1
+    wget http://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_VERSION:0:1}/v${TOMCAT_VERSION}/bin/extras/catalina-jmx-remote.jar -O $TOMCAT_FOLDER/lib/catalina-jmx-remote.jar > /dev/null 2>&1
 
     echo "=========== Rouplex ============= Untaring tomcat $TOMCAT_GZ"
     tar -xvf $TOMCAT_GZ > /dev/null 2>&1
