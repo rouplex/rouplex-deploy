@@ -69,6 +69,8 @@ install_tomcat() {
             exit 1
         fi
     done
+
+    rm tomcatGz
 }
 
 # SYNOPSIS
