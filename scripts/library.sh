@@ -54,7 +54,7 @@ install_tomcat() {
     if [ $? -eq 0 ]; then
         echo "=========== Rouplex ============= Installed tomcat $tomcatVersion at $TOMCAT_PATH"
     else
-        echo "=========== Rouplex ============= Exiting. Error installing $tomcatVersion"
+        echo "=========== Rouplex ============= Exiting. Error installing tomcat $tomcatVersion"
         exit 1
     fi
 
@@ -85,25 +85,25 @@ clone_rouplex_private_repo() {
         exit 1
     fi
 
-    local ROUPLEX_REPO=$1
-    local BRANCH=$2
+    local rouplexRepo=$1
+    local branch=$2
     mkdir .ssh
 
     # Name of key is the same as the repo for simplicity
-    aws s3 cp s3://rouplex/deploys/access-keys/${ROUPLEX_REPO} .ssh > /dev/null 2>&1
+    aws s3 cp s3://rouplex/deploys/access-keys/${rouplexRepo} .ssh > /dev/null 2>&1
     aws s3 cp s3://rouplex/deploys/access-keys/known_hosts .ssh > /dev/null 2>&1
 
-    chmod 400 .ssh/${ROUPLEX_REPO}
+    chmod 400 .ssh/${rouplexRepo}
     chown -R ec2-user:ec2-user .ssh
 
     yum install -y git
-    rm -rf ${ROUPLEX_REPO}
-    sudo -H -u ec2-user bash -c "ssh-agent bash -c 'ssh-add .ssh/${ROUPLEX_REPO}; git clone ssh://bitbucket.org/rouplex/${ROUPLEX_REPO}.git --branch ${BRANCH} --single-branch'"
+    rm -rf ${rouplexRepo}
+    sudo -H -u ec2-user bash -c "ssh-agent bash -c 'ssh-add .ssh/${rouplexRepo}; git clone ssh://bitbucket.org/rouplex/${rouplexRepo}.git --branch ${branch} --single-branch'"
 
-    if [ -d ${ROUPLEX_REPO} ]; then
-        echo "=========== Rouplex ============= Cloned ${ROUPLEX_REPO}"
+    if [ -d ${rouplexRepo} ]; then
+        echo "=========== Rouplex ============= Cloned ${rouplexRepo}"
     else
-        echo "=========== Rouplex ============= Exiting. Failed cloning ${ROUPLEX_REPO}"
+        echo "=========== Rouplex ============= Exiting. Failed cloning ${rouplexRepo}"
     fi
 }
 
