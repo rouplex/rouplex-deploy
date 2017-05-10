@@ -38,13 +38,13 @@ install_tomcat() {
     TOMCAT_PATH=`pwd`/${TOMCAT_FOLDER}
     local tomcatGz=${TOMCAT_FOLDER}.tar.gz
 
-    echo "=========== Rouplex ============= Downloading tomcat $tomcatVersion"
+    echo "=========== Rouplex ============= Downloading tomcat $tomcatGz"
     wget http://archive.apache.org/dist/tomcat/tomcat-${tomcatVersion:0:1}/v${tomcatVersion}/bin/${tomcatGz} -O $tomcatGz > /dev/null 2>&1
 
     if [ $? -eq 0 ]; then
-    echo "=========== Rouplex ============= Downloaded tomcat $tomcatVersion"
+    echo "=========== Rouplex ============= Downloaded tomcat $tomcatGz"
     else
-        echo "=========== Rouplex ============= Exiting. Error installing rpm $tomcatGz"
+        echo "=========== Rouplex ============= Exiting. Error downloading $tomcatGz"
         exit 1
     fi
 
@@ -52,9 +52,9 @@ install_tomcat() {
     tar -xvf $tomcatGz > /dev/null 2>&1
 
     if [ $? -eq 0 ]; then
-        echo "=========== Rouplex ============= Installed tomcat $tomcatGz at $TOMCAT_PATH"
+        echo "=========== Rouplex ============= Installed tomcat $tomcatVersion at $TOMCAT_PATH"
     else
-        echo "=========== Rouplex ============= Exiting. Error installing rpm $tomcatGz"
+        echo "=========== Rouplex ============= Exiting. Error installing $tomcatVersion"
         exit 1
     fi
 
@@ -126,8 +126,10 @@ search_and_replace() {
         exit 1
     fi
 
+    # echo "=========== Rouplex ============= Replacing $2 occurrences with $3 in $1"
+
     local searchEscaped=$(sed 's/[^^]/[&]/g; s/\^/\\^/g' <<<"$2")
     local replaceEscaped=$(sed 's/[&/\]/\\&/g' <<<"$3")
 
-    sed -i "" -e "s/$searchEscaped/$replaceEscaped/g" $1
+    sed -i -e "s/$searchEscaped/$replaceEscaped/g" $1
 }
