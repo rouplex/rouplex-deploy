@@ -18,6 +18,7 @@ install_jdk8() {
             exit 1
         fi
 
+        rm -rf $jdk8Rpm
         echo "=========== Rouplex ============= Installed $jdk8Name"
     fi
 }
