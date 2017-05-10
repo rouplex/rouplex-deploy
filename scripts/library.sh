@@ -70,7 +70,7 @@ install_tomcat() {
         fi
     done
 
-    rm tomcatGz
+    rm $tomcatGz
 }
 
 # SYNOPSIS
