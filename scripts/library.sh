@@ -1,14 +1,14 @@
 # SYNOPSIS
 #  install_jdk8
 install_jdk8() {
-    local jdk8Name="jdk1.8.0_121.x86_64"
-    local jdk8Rpm="jdk-8u121-linux-x64.rpm"
+    local jdk8Name="jdk1.8.0_131.x86_64"
+    local jdk8Rpm="jdk-8u131-linux-x64.rpm"
 
     if yum list installed $jdk8Name > /dev/null 2>&1; then
         echo "=========== Rouplex ============= Skipping install of $jdk8Name (already installed)"
     else
         echo "=========== Rouplex ============= Downloading java rpm $jdk8Rpm"
-        wget --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u121-b13/e9e7ea248e2c4826b92b3f075a80e441/$jdk8Rpm -O $jdk8Rpm  > /dev/null 2>&1
+        wget -c --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/$jdk8Rpm -O $jdk8Rpm  > /dev/null 2>&1
 
         echo "=========== Rouplex ============= Installing java rpm $jdk8Name from $jdk8Rpm"
         sudo yum -y localinstall $jdk8Rpm > /dev/null 2>&1
